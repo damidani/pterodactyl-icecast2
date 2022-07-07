@@ -12,11 +12,6 @@ RUN apt-get -qq -y update; \
   chown -R icecast2 /etc/icecast2; \
   sed -i 's/ -d//' /etc/cron-apt/action.d/3-download 
 
-CMD ["/start.sh"]
-
-
-
-
 USER container
 ENV  USER container
 ENV HOME /home/container
@@ -24,5 +19,6 @@ ENV HOME /home/container
 WORKDIR /home/container
 
 
-ADD ./start.sh /start.sh
-ADD ./etc /etc
+COPY ./entrypoint.sh /entrypoint.sh
+
+CMD ["/bin/ash", "/entrypoint.sh"]
