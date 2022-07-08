@@ -1,24 +1,18 @@
-FROM debian:stable-slim
+FROM alpine:latest
+LABEL maintainer "infiniteproject@gmail.com"
 
-MAINTAINER Damien Benedetti "parwan@outlook.fr"
+RUN addgroup -S icecast && \
+    adduser -S icecast
+    
+RUN apk add --update \
+        icecast \
+        mailcap && \
+    rm -rf /var/cache/apk/*
 
-ENV DEBIAN_FRONTEND noninteractive
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-RUN apt-get -qq -y update; \
-  apt-get -qq -y full-upgrade; \ 
-  apt-get -qq -y install icecast2 python-setuptools sudo cron-apt git; \
-  apt-get -y autoclean; \
-  apt-get clean; \
-  chown -R icecast2 /etc/icecast2; \
-  sed -i 's/ -d//' /etc/cron-apt/action.d/3-download 
-
-USER container
-ENV  USER container
-ENV HOME /home/container
-
-WORKDIR /home/container
-
-
-COPY ./entrypoint.sh /entrypoint.sh
-
-CMD ["/bin/sh", "/entrypoint.sh"]
+EXPOSE 8000
+VOLUME ["/var/log/icecast"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD icecast -c /etc/icecast.xml
