@@ -1,18 +1,13 @@
 FROM alpine:latest
-LABEL maintainer "infiniteproject@gmail.com"
 
-RUN addgroup -S icecast && \
-    adduser -S icecast
-    
-RUN apk add --update \
-        icecast \
-        mailcap && \
-    rm -rf /var/cache/apk/*
+RUN apk --update --no-cache add ca-certificates icecast2
 
-COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+USER container
+ENV  USER container
+ENV HOME /home/container
 
-EXPOSE 8000
-VOLUME ["/var/log/icecast"]
-ENTRYPOINT ["/entrypoint.sh"]
-CMD icecast -c /etc/icecast.xml
+WORKDIR /home/container
+
+COPY ./entrypoint.sh /entrypoint.sh
+
+CMD ["/bin/ash", "/entrypoint.sh"]

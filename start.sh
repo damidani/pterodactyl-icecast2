@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/ash
 
 echo "Starting ICECAST2..."
-/usr/sbin/icecast2 -n -c /etc/icecast2/icecast.xml
+icecast2 -n -c /mnt/server/etc/icecast2/icecast.xml
+
